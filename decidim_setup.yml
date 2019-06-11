@@ -1,0 +1,12 @@
+---
+- hosts: all
+  remote_user: mako
+
+  tasks:
+    - name: Update repositories cache
+      apt:
+        update_cache: yes
+    - name: install nginx
+      apt:
+        name: nginx
+        state: latest
