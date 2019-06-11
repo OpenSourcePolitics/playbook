@@ -3,17 +3,21 @@
   remote_user: mako
 
   tasks:
-    - name: Update repositories cache
-      apt:
-        update_cache: yes
-      become: yes
-      become_user: root
-      become_method: sudo
+    - name: install dependencies
+      block:
+      - name: Update repositories cache
+        apt:
+          update_cache: yes
 
-    - name: install nginx
-      apt:
-        name: nginx
-        state: latest
+      - name: install nginx
+        apt:
+          name: nginx
+          state: latest
+
+      - name: install postgresql
+        apt:
+          name: postgresql
+          state: latest
       become: yes
       become_user: root
       become_method: sudo
