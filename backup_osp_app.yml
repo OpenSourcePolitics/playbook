@@ -31,9 +31,21 @@
             target: "{{ tempdir }}/{{ db_name }}.sql.gz"
 
         - name: Make archive
+          archive:
+            path:
+              - "{{ tempdir }}/osp-app"
+              - "{{ tempdir }}/{{ db_name }}.sql.gz"
+            dest: "{{ tempdir }}/backup_filename"
+          register: archive
+
+        - name: store backup root path
+            set_fact:
+              backup_path: "{{ archive.arcroot }}"
+
+        - name: Copy archive to remote
           debug:
             msg: Hello, world!
 
-        - name: Copy archive to remote
+        - name: Remove temp dir
           debug:
             msg: Hello, world!
