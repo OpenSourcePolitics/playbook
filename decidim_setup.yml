@@ -29,7 +29,7 @@
                    'libgdbm-dev',
                    'git',
                    'libpq-dev']
-            state: installed
+            state: present
 
 
         - name: Install nginx
