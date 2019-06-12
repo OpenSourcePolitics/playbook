@@ -1,0 +1,12 @@
+---
+- hosts: all
+  remote_user: mako
+
+  tasks:
+    - name: Backup osp app
+      block:
+        - name: Create temp directory
+        - name: Copy osp app to tmp directory
+        - name: Dump database to tmp directory
+        - name: Make archive
+        - name: Copy archive to remote
