@@ -1,0 +1,7 @@
+---
+- hosts: all
+  remote_user: mako
+  vars:
+    - osp_app_path: /home/mako/
+
+  tasks:
