@@ -8,10 +8,17 @@
 
   tasks:
     - name: install prerequisites
-      apt:
-        name: ["libpq-dev", "python-psycopg2"]
-        state: latest
-        update_cache: yes
+      block:
+      - name: Gather package facts
+        package_facts:
+          manager: apt
+
+      - name: install dependancies
+        apt:
+          name: ["libpq-dev", "python-psycopg2"]
+          state: latest
+          update_cache: yes
+        when: '"python-psycopg2" not in ansible_facts.packages'
       become: yes
       become_user: root
       become_method: sudo
@@ -35,13 +42,14 @@
             name: "{{ db_name }}"
             state: dump
             target: "{{ tempdir }}/{{ db_name }}.sql.gz"
+            login_user: "{{ ansible_ssh_user }}"
 
         - name: Make archive
           archive:
             path:
               - "{{ tempdir }}/osp-app"
               - "{{ tempdir }}/{{ db_name }}.sql.gz"
-            dest: "{{ tempdir }}/backup_filename"
+            dest: "{{ tempdir }}/{{ backup_filename }}"
           register: archive
 
         - name: store backup root path
