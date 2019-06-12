@@ -1,23 +1,101 @@
 ---
 - hosts: all
   remote_user: mako
+  vars:
+    - rbenv_root: /usr/local/rbenv
+    - rbenv_version: v0.4.0
+    - ruby_version: 1.9.3-p385
 
   tasks:
-    - name: install dependencies
+    - name: Basic setup for decidim server
       block:
-      - name: Update repositories cache
-        apt:
-          update_cache: yes
+        - name: Update repositories cache
+          apt:
+            update_cache: yes
 
-      - name: install nginx
-        apt:
-          name: nginx
-          state: latest
+        - name: Install dependencies
+          apt:
+            name: ['curl',
+                   'autoconf',
+                   'bison',
+                   'build-essential',
+                   'libssl-dev',
+                   'libyaml-dev',
+                   'libreadline6-dev',
+                   'zlib1g-dev',
+                   'libncurses5-dev',
+                   'libffi-dev',
+                   'libgdbm5',
+                   'libgdbm-dev',
+                   'git',
+                   'libpq-dev']
+            state: installed
 
-      - name: install postgresql
-        apt:
-          name: postgresql
-          state: latest
+
+        - name: Install nginx
+          apt:
+            name: nginx
+            state: latest
+
+        - name: Install postgresql
+          apt:
+            name: postgresql
+            state: latest
+        - name: Install redis-server
+          apt:
+            name: redis-server
+            state: latest
       become: yes
       become_user: root
       become_method: sudo
+
+    - name: Install Ruby
+      block:
+        - name: rbenv | update rbenv repo
+          git: repo=git://github.com/sstephenson/rbenv.git dest=$rbenv_root version=$rbenv_version
+
+        - name: rbenv | add rbenv to path
+          file: path=/usr/local/bin/rbenv src=${rbenv_root}/bin/rbenv state=link
+
+        - name: rbenv | add rbenv initialization to profile
+          template: src=templates/rbenv.sh.j2 dest=/etc/profile.d/rbenv.sh owner=root group=root mode=0755
+
+        - name: rbenv | check ruby-build installed
+          command: test -x /usr/local/bin/ruby-build
+          register: rbuild_present
+          ignore_errors: yes
+
+        - name: rbenv | clone ruby-build repo
+          git: repo=git://github.com/sstephenson/ruby-build.git dest=${rbenv_root}/plugins/ruby-build
+
+        - name: rbenv | install ruby-build
+          shell: RBENV_ROOT=${rbenv_root} rbenv install -l
+
+        - name: rbenv | check ruby $ruby_version installed
+          shell: RBENV_ROOT=${rbenv_root} rbenv versions | grep $ruby_version
+          register: ruby_installed
+          ignore_errors: yes
+
+        - name: rbenv | install ruby $ruby_version
+          shell: RBENV_ROOT=${rbenv_root} rbenv install $ruby_version
+
+        - name: rbenv | set global ruby $ruby_version
+          shell: RBENV_ROOT=${rbenv_root} rbenv global $ruby_version
+
+        - name: rbenv | rehash
+          shell: RBENV_ROOT=${rbenv_root} rbenv rehash
+
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Install gems
+      block:
+        - name: Set no document parameter
+          shell: "echo 'gem: --no-document' > /home/mako/.gemrc"
+
+        - name: Install basic gem
+          gem:
+            name: bundler
+            state: latest
+
