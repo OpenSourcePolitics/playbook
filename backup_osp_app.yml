@@ -19,10 +19,7 @@
             tempdir: "{{ tempfile.path }}"
 
         - name: Copy osp app to tmp directory
-          copy:
-            src: "{{ osp_app_dir }}"
-            dest: "{{ tempdir }}"
-            remote_src: yes
+          command: cp -r "{{ osp_app_dir }}" "{{ tempdir }}"
 
         - name: Dump database to tmp directory
           postgresql_db:
@@ -39,8 +36,8 @@
           register: archive
 
         - name: store backup root path
-            set_fact:
-              backup_path: "{{ archive.arcroot }}"
+          set_fact:
+            backup_path: "{{ archive.arcroot }}"
 
         - name: Copy archive to remote
           debug:
