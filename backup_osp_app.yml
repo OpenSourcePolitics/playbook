@@ -4,6 +4,7 @@
   vars:
     backup_filename: "backup-$(date +%Y-%m-%d_%H-%M-%S)"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
+    db_name: "osp_app"
 
   tasks:
     - name: Backup osp app
@@ -12,19 +13,26 @@
           tempfile:
             state: directory
           register: tempfile
+
         - name: store tempdir
           set_fact:
-            tempdir: "{{ tempfile }}"
+            tempdir: "{{ tempfile.path }}"
+
         - name: Copy osp app to tmp directory
           copy:
             src: "{{ osp_app_dir }}"
-            dest: "{{ tempdir.path }}"
+            dest: "{{ tempdir }}"
+
         - name: Dump database to tmp directory
-          debug:
-            msg: Hello, world!
+          postgresql_db:
+            name: "{{ db_name }}"
+            state: dump
+            target: "{{ tempdir }}/{{ db_name }}.sql.gz"
+
         - name: Make archive
           debug:
             msg: Hello, world!
+
         - name: Copy archive to remote
           debug:
             msg: Hello, world!
