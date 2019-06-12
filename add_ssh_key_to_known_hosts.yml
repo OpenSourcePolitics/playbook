@@ -1,0 +1,11 @@
+---
+- hosts: all
+  remote_user: mako
+
+  tasks:
+    - name: Copy backup server ssh key if not exist
+      lineinfile:
+        path: "/home/{{ ansible_ssh_user }}/.ssh/known_hosts"
+        line: "{{ backup_ssh_key }}"
+        state: present
+        create: true
