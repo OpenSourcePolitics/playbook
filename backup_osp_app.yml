@@ -10,16 +10,16 @@
   tasks:
     - name: install prerequisites
       block:
-      - name: Gather package facts
-        package_facts:
-          manager: apt
+        - name: Gather package facts
+          package_facts:
+            manager: apt
 
-      - name: install dependancies
-        apt:
-          name: ["libpq-dev", "python-psycopg2"]
-          state: latest
-          update_cache: yes
-        when: '"python-psycopg2" not in ansible_facts.packages'
+        - name: install dependancies
+          apt:
+            name: ["libpq-dev", "python-psycopg2"]
+            state: latest
+            update_cache: yes
+          when: '"python-psycopg2" not in ansible_facts.packages'
       become: yes
       become_user: root
       become_method: sudo
@@ -57,11 +57,10 @@
           set_fact:
             backup_path: "{{ archive.arcroot }}"
 
-        - name: Do ssh key scan
-          command: "ssh-keyscan -t ssh-rsa {{ backup_server_port }} {{ remote_backup_host }}"
-
-        - name: Copy archive to remote
-          command: "scp -r -p {{ backup_server_port }} {{ backup_path }} {{ remote_backup_user }}@{{ remote_backup_host }}:{{ remote_backup_directory }}"
+        - name: Copy archive to master
+          fetch:
+            src: "{{ archive.arcroot }}"
+            dest: "/tmp/backup-{{ inventory_hostname }}"
 
         - name: Remove temp dir
           file:
