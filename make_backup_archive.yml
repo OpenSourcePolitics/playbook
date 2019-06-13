@@ -56,7 +56,7 @@
         - name: Copy archive to master
           fetch:
             src: "{{ tempdir }}/{{ backup_filename }}"
-            dest: "{{ temp_backup_directory }}/"
+            dest: "/temp"
             validate_checksum: yes
 
         - name: Remove temp dir
