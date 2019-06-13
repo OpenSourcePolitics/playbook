@@ -3,7 +3,7 @@
   remote_user: mako
   vars:
     temp_backup_directory: "/tmp/backup"
-    backup_filename: "backup-{{ inventory_hostname }}-{{ ansible_date_time.date }}"
+    backup_filename: "backup-{{ inventory_hostname }}-{{ ansible_date_time.date }}.tar.gz"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
     db_name: "osp_app"
 
@@ -50,12 +50,12 @@
             path:
               - "{{ tempdir }}/osp-app"
               - "{{ tempdir }}/{{ db_name }}.sql.gz"
-            dest: "{{ tempdir }}/{{ backup_filename }}.gz"
+            dest: "{{ tempdir }}/{{ backup_filename }}"
           register: archive
 
         - name: Copy archive to master
           fetch:
-            src: "{{ tempdir }}/{{ backup_filename }}.gz"
+            src: "{{ tempdir }}/{{ backup_filename }}"
             dest: "/temp"
             validate_checksum: yes
 
