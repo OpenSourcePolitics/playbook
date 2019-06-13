@@ -2,15 +2,21 @@
 - hosts: all
   remote_user: mako
   vars:
-    backup_directory: "/home/{{ remote_backup_user }}/backup/{{ inventory_hostname }}"
+    temp_backup_directory: "/tmp/backup"
+    backup_directory: "/home/{{ ansible_ssh_user }}/backup/"
 
   tasks:
     - name: send backup directory to master
       copy:
-        src: "/tmp/backup/"
+        src: "{{ item }}"
         dest: "{{ backup_directory }}"
+      with_fileglob:
+        - "{{ temp_backup_directory }}/*"
+      register: copy
+      failed_when: "'Unable to find' in copy.stderr"
 
     - name: Remove backup dir
-        file:
-          state: absent
-          path: "{{ backup_directory }}"
+      file:
+        state: absent
+        path: "{{ temp_backup_directory }}"
+      delegate_to: 127.0.0.1
