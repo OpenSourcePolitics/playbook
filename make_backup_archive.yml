@@ -3,7 +3,7 @@
   remote_user: mako
   vars:
     temp_backup_directory: "/tmp/backup"
-    backup_filename: "backup"
+    backup_filename: "backup-{{ inventory_hostname }}"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
     db_name: "osp_app"
 
@@ -60,7 +60,7 @@
         - name: Copy archive to master
           fetch:
             src: "{{ archive.arcroot }}/{{ backup_filename }}"
-            dest: "{{ temp_backup_directory }}/backup-{{ inventory_hostname }}/"
+            dest: "{{ temp_backup_directory }}/"
 
         - name: Remove temp dir
           file:
