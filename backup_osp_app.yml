@@ -61,5 +61,6 @@
             msg: Hello, world!
 
         - name: Remove temp dir
-          debug:
-            msg: Hello, world!
+          file:
+            state: absent
+            path: "{{ tempdir }}"
