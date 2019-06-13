@@ -3,7 +3,7 @@
   remote_user: mako
   vars:
     temp_backup_directory: "/tmp/backup"
-    backup_filename: "backup-{{ inventory_hostname }}"
+    backup_filename: "backup-{{ inventory_hostname }}-{{ ansible_date_time.date }}"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
     db_name: "osp_app"
 
