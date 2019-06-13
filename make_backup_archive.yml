@@ -50,12 +50,12 @@
             path:
               - "{{ tempdir }}/osp-app"
               - "{{ tempdir }}/{{ db_name }}.sql.gz"
-            dest: "{{ tempdir }}/{{ backup_filename }}"
+            dest: "{{ tempdir }}/{{ backup_filename }}.gz"
           register: archive
 
         - name: Copy archive to master
           fetch:
-            src: "{{ tempdir }}/{{ backup_filename }}"
+            src: "{{ tempdir }}/{{ backup_filename }}.gz"
             dest: "/temp"
             validate_checksum: yes
 
