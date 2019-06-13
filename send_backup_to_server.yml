@@ -2,7 +2,7 @@
 - hosts: all
   remote_user: mako
   vars:
-    temp_backup_directory: "/tmp/backup"
+    temp_backup_directory: "/temp"
     backup_directory: "/home/{{ ansible_ssh_user }}/backup/"
 
   tasks:
@@ -11,7 +11,7 @@
         src: "{{ item }}"
         dest: "{{ backup_directory }}"
       with_fileglob:
-        - "{{ temp_backup_directory }}/*"
+        - "{{ temp_backup_directory }}/**/*.gz"
       register: copy
       failed_when: "'Unable to find' in copy.stderr"
 
