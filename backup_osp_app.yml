@@ -5,7 +5,6 @@
     backup_filename: "backup"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
     db_name: "osp_app"
-    remote_backup_directory: "/home/{{ remote_backup_user }}/backup/{{ inventory_hostname }}"
 
   tasks:
     - name: install prerequisites

@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: mako
+  vars:
+    backup_directory: "/home/{{ remote_backup_user }}/backup/{{ inventory_hostname }}"
+
+  tasks:
+    - name: send backup directory to master
+      copy:
+        src: "/tmp/backup/"
+        dest: "{{ backup_directory }}"
+
+    - name: Remove backup dir
+        file:
+          state: absent
+          path: "{{ backup_directory }}"
