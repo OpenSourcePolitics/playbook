@@ -55,11 +55,11 @@
 
         - name: store backup root path
           set_fact:
-            backup_path: "{{ archive.arcroot }}"
+            backup_path: "{{ archive.arcroot }}/{{ backup_filename }}"
 
         - name: Copy archive to master
           fetch:
-            src: "{{ archive.arcroot }}/{{ backup_filename }}"
+            src: "{{ backup_path }}"
             dest: "{{ temp_backup_directory }}/"
 
         - name: Remove temp dir
