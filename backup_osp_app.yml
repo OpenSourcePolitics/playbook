@@ -5,6 +5,7 @@
     backup_filename: "backup-$(date +%Y-%m-%d_%H-%M-%S)"
     osp_app_dir: "/home/{{ ansible_ssh_user }}/osp-app"
     db_name: "osp_app"
+    remote_backup_directory: "/home/{{ remote_backup_user }}/backup/{{ inventory_hostname }}"
 
   tasks:
     - name: install prerequisites
@@ -57,8 +58,7 @@
             backup_path: "{{ archive.arcroot }}"
 
         - name: Copy archive to remote
-          debug:
-            msg: Hello, world!
+          command: "scp -r -p {{ backup_path }} {{ remote_backup_user }}@{{ remote_backup_host }}:{{ remote_backup_directory }}"
 
         - name: Remove temp dir
           file:
