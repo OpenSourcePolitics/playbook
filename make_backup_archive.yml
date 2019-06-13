@@ -57,6 +57,7 @@
           fetch:
             src: "{{ tempdir }}/{{ backup_filename }}"
             dest: "{{ temp_backup_directory }}/"
+            validate_checksum: yes
 
         - name: Remove temp dir
           file:
