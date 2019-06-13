@@ -7,13 +7,14 @@
 
   tasks:
     - name: Find archive on /temp path
-      local_action: command find /temp -name "*.gz"
+      local_action: command find /temp -name "*.tar.gz"
       register: find
 
     - name: send backup directory to master
       copy:
-        src: "{{ find.stdout }}"
+        src: "{{ item }}"
         dest: "{{ backup_directory }}"
+      with_items: "{{ find.stdout_lines }}"
 
     - name: Remove backup dir
       file:
