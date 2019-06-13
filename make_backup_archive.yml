@@ -53,13 +53,9 @@
             dest: "{{ tempdir }}/{{ backup_filename }}"
           register: archive
 
-        - name: store backup root path
-          set_fact:
-            backup_path: "{{ archive.arcroot }}/{{ backup_filename }}"
-
         - name: Copy archive to master
           fetch:
-            src: "{{ backup_path }}"
+            src: "{{ tempdir }}/{{ backup_filename }}"
             dest: "{{ temp_backup_directory }}/"
 
         - name: Remove temp dir
