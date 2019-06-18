@@ -59,7 +59,7 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: precompile assets
-      command: RAILS_ENV=production bundle exec rake assets:precompile
+      command: bash -lc "RAILS_ENV=production bundle exec rake assets:precompile"
       args:
         chdir: "{{ osp_app_directory }}"
 
