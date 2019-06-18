@@ -1,0 +1,76 @@
+---
+- hosts: all
+  remote_user: mako
+  vars:
+    osp_app_directory: "/home/{{ ansible_ssh_user }}/osp-app/"
+    default_branch: "0.16-stable"
+
+  tasks:
+    - name: Stashing changes
+      command: git stash
+      args:
+        chdir: "{{ osp_app_directory }}"
+      register: stash
+
+    - name: Fetching changes
+      command: git fetch
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Checking out changes
+      command: git checkout {{ default_branch }}
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Poping changes
+      command: git stash pop
+      args:
+        chdir: "{{ osp_app_directory }}"
+      when: stash.stdout != "No local changes to save"
+
+    - name: Updating ruby if necessary
+      command: rbenv install $(.ruby-version) -s
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Install bundle
+      command: bundle install --path vendor/bundle
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: precompile assets
+      command: RAILS_ENV=production bundle exec rake assets:precompile
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Restart sidekiq service
+      command: systemctl restart sidekiq-*
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Restart nginx
+      command: systemctl reload nginx
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: list nginx site
+      shell: grep -s "server_name " /etc/nginx/sites-enabled/* | sed 's/.*server_name \(.*\);/\1/' | sed 's/ /\n/'
+      register: shell_output
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    - name: Checking vhost connectivity
+      uri:
+        url: "{{ item }}"
+      register: http_responses
+      loop:
+        - "{{ shell_output.stdout_lines }}"
+
+    - name: Parsing response
+      command: echo "{{ item }}"
+      loop:
+        - "{{ http_responses }}"
+      when: item != 200
