@@ -23,10 +23,14 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Setting ruby version
-      command: cat .ruby-version
+      shell: "cat .ruby-version"
       args:
         chdir: "{{ osp_app_directory }}"
-      register: ruby_version
+      register: shell_output
+
+    - name: Storing ruby version
+      set_fact:
+        ruby_version: "{{ shell_output.stdout }}"
 
     - name: Poping changes
       command: git stash pop
