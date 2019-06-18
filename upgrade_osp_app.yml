@@ -58,6 +58,11 @@
       args:
         chdir: "{{ osp_app_directory }}"
 
+    - name: Run migration
+        command: bash -lc "RAILS_ENV=production bundle exec rake db:migrate"
+        args:
+          chdir: "{{ osp_app_directory }}"
+
     - name: precompile assets
       command: bash -lc "RAILS_ENV=production bundle exec rake assets:precompile"
       args:
