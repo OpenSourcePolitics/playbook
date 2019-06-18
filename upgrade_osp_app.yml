@@ -59,9 +59,9 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Run migration
-        command: bash -lc "RAILS_ENV=production bundle exec rake db:migrate"
-        args:
-          chdir: "{{ osp_app_directory }}"
+      command: bash -lc "RAILS_ENV=production bundle exec rake db:migrate"
+      args:
+        chdir: "{{ osp_app_directory }}"
 
     - name: precompile assets
       command: bash -lc "RAILS_ENV=production bundle exec rake assets:precompile"
@@ -79,23 +79,3 @@
       become: yes
       become_user: root
       become_method: sudo
-
-    - name: list nginx site
-      shell: grep -s "server_name " /etc/nginx/sites-enabled/* | sed 's/.*server_name \(.*\);/\1/' | sed 's/ /\n/'
-      register: shell_output
-      become: yes
-      become_user: root
-      become_method: sudo
-
-    - name: Checking vhost connectivity
-      uri:
-        url: "{{ item }}"
-      register: http_responses
-      loop:
-        - "{{ shell_output.stdout_lines }}"
-
-    - name: Parsing response
-      command: echo "{{ item }}"
-      loop:
-        - "{{ http_responses }}"
-      when: item != 200
