@@ -43,18 +43,13 @@
       args:
         chdir: "{{ osp_app_directory }}"
 
-    - name: Setting ruby version
-      shell: rbenv local "{{ ruby_version }}" && rbenv shell "{{ ruby_version }}"
-      args:
-        chdir: "{{ osp_app_directory }}"
-
     - name: Install bundle
-      command: gem install bundler
+      shell: "RBENV_VERSION={{ ruby_version }} gem install bundler"
       args:
         chdir: "{{ osp_app_directory }}"
 
     - name: Install gemfile
-      command: bundle install --path vendor/bundle
+      shell: "RBENV_VERSION={{ ruby_version }} bundle install --path vendor/bundle"
       args:
         chdir: "{{ osp_app_directory }}"
 
