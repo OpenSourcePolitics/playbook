@@ -22,6 +22,12 @@
       args:
         chdir: "{{ osp_app_directory }}"
 
+    - name: Setting ruby version
+      command: cat .ruby-version
+      args:
+        chdir: "{{ osp_app_directory }}"
+      register: ruby_version
+
     - name: Poping changes
       command: git stash pop
       args:
@@ -29,7 +35,12 @@
       when: stash.stdout != "No local changes to save"
 
     - name: Updating ruby if necessary
-      command: rbenv install $(.ruby-version) -s
+      command: rbenv install "{{ ruby_version }}" -s
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Setting ruby version
+      command: rbenv local "{{ ruby_version }}" && rbenv shell "{{ ruby_version }}"
       args:
         chdir: "{{ osp_app_directory }}"
 
