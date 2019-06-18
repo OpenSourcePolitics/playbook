@@ -2,6 +2,7 @@
 - hosts: all
   remote_user: mako
   vars:
+    bash_profile: "/home/{{ ansible_ssh_user }}/.bash_profile"
     osp_app_directory: "/home/{{ ansible_ssh_user }}/osp-app/"
     default_branch: "0.16-stable"
 
@@ -44,12 +45,12 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Install bundle
-      shell: "RBENV_VERSION={{ ruby_version }} gem install bundler"
+      shell: "source {{ bash_profile }} && rbenv shell {{ ruby_version}} && gem install bundler"
       args:
         chdir: "{{ osp_app_directory }}"
 
     - name: Install gemfile
-      shell: "RBENV_VERSION={{ ruby_version }} bundle install --path vendor/bundle"
+      shell: "source {{ bash_profile }} && rbenv shell {{ ruby_version}} && bundle install --path vendor/bundle"
       args:
         chdir: "{{ osp_app_directory }}"
 
