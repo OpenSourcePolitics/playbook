@@ -44,7 +44,7 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Setting ruby version
-      command: rbenv local "{{ ruby_version }}" && rbenv shell "{{ ruby_version }}"
+      shell: rbenv local "{{ ruby_version }}" && rbenv shell "{{ ruby_version }}"
       args:
         chdir: "{{ osp_app_directory }}"
 
