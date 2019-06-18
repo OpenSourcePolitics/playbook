@@ -5,6 +5,7 @@
     bash_profile: "/home/{{ ansible_ssh_user }}/.bash_profile"
     osp_app_directory: "/home/{{ ansible_ssh_user }}/osp-app/"
     default_branch: "0.16-stable"
+    bundler_version: "1.17.3"
 
   tasks:
     - name: Stashing changes
@@ -44,13 +45,16 @@
       args:
         chdir: "{{ osp_app_directory }}"
 
-    - name: Install bundle
-      shell: "source {{ bash_profile }} && rbenv shell {{ ruby_version}} && gem install bundler"
+    - name: Set ruby shell version
+      command: bash -lc "rbenv shell \"{{ ruby_version }}\""
+
+    - name: Install bundler
+      command: 'bash -lc "gem install bundler -v \"{{ bundler_version }}\""'
       args:
         chdir: "{{ osp_app_directory }}"
 
     - name: Install gemfile
-      shell: "source {{ bash_profile }} && rbenv shell {{ ruby_version}} && bundle install --path vendor/bundle"
+      command: bash -lc "bundle install --path vendor/bundle"
       args:
         chdir: "{{ osp_app_directory }}"
 
