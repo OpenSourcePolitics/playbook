@@ -49,6 +49,11 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Install bundle
+      command: gem install bundler
+      args:
+        chdir: "{{ osp_app_directory }}"
+
+    - name: Install gemfile
       command: bundle install --path vendor/bundle
       args:
         chdir: "{{ osp_app_directory }}"
