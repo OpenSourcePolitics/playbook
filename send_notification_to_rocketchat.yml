@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  vars:
+    channel: "#dev-ops"
+    domain: "osp.rocket.chat"
+    token: "8B7BFkXk2jXuKJMTt/GCbb9PKZCAMn5LAwjx5w9zhWAWYJbBJe3NweRonNxaxCqBw9"
+    icon_emoji: ":wrench:"
+    attachment_title: ""
+    attachment_title_url: ""
+    attachment_msg: ""
+    msg: ""
+    username: "rocket.cat"
+    attachment_color: "#ff00dd"
+    link_names: 1
+
+  tasks:
+    - name: Send notification message via Rocket Chat all options
+      rocketchat:
+        domain: "{{ domain }}"
+        token: "{{ token }}"
+        msg: "{{ msg }}"
+        channel: "{{ channel }}"
+        username: "{{ username }}"
+        link_names: "{{ link_names }}"
+        icon_emoji: "{{ icon_emoji }}"
+        attachments:
+          - text: "{{ attachment_msg }}"
+            color: "{{ attachment_color }}"
+            title: "{{ attachment_title }}"
+      delegate_to: localhost
