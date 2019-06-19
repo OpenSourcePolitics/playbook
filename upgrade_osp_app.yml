@@ -15,7 +15,7 @@
       register: stash
 
     - name: Fetching changes
-      command: git fetch
+      command: git fetch origin
       args:
         chdir: "{{ osp_app_directory }}"
 
