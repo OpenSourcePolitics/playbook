@@ -74,7 +74,7 @@
         chdir: "{{ osp_app_directory }}"
 
     - name: Restart sidekiq service
-      command: systemctl restart sidekiq-*
+      command: systemctl restart sidekiq
       become: yes
       become_user: root
       become_method: sudo
