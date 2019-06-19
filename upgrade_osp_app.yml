@@ -5,7 +5,6 @@
     bash_profile: "/home/{{ ansible_ssh_user }}/.bash_profile"
     osp_app_directory: "/home/{{ ansible_ssh_user }}/osp-app/"
     default_branch: "0.16-stable"
-    bundler_version: "1.17.3"
 
   tasks:
     - name: Stashing changes
@@ -38,6 +37,16 @@
     - name: Storing ruby version
       set_fact:
         ruby_version: "{{ shell_output.stdout }}"
+
+    - name: Setting bundler version
+      shell: "cat Gemfile.lock | tail -1 | tr -d \" \""
+      args:
+        chdir: "{{ osp_app_directory }}"
+      register: shell_output
+
+    - name: Storing bundler version
+      set_fact:
+        bundler_version: "{{ shell_output.stdout }}"
 
     - name: Poping changes
       command: git stash pop
