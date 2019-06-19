@@ -24,6 +24,11 @@
       args:
         chdir: "{{ osp_app_directory }}"
 
+    - name: Pulling changes
+      command: git pull
+      args:
+        chdir: "{{ osp_app_directory }}"
+
     - name: Setting ruby version
       shell: "cat .ruby-version"
       args:
