@@ -1,20 +1,41 @@
 ---
 - hosts: all
-  remote_user: mako
   vars:
-    - tmp: "tmp"
+    - default_app_name: osp_app
+    - database_name: osp_app
+    - database_user: postgres
+    - backup_filename: "backup-{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.tar.gz"
 
   tasks:
     - name: Backup database and store file to tmp directory
-      shell: pg_dump -Fp -c -Z 9 'osp_app' > "osp_app-$(date +%Y%m%d%H%M%S).sql.gz"
+      shell: "pg_dump -Fp -c -Z 9 {{ database_name }} > /tmp/{{ backup_filename }}"
+
+    - name: store tempdir 
+      set_fact:
+       backup_file: "/tmp/{{ backup_filename }}"
+
+    - name: Set app_name
+      set_fact:
+       app_name: "{{ app_name | default(default_app_name) }}"
 
     - name: Transfer database to host
       fetch:
-        src: /home/mako/pg_dump/osp_app-*.gz
-        dest: ~/
+        src: "{{ backup_file }}"
+        dest: "/tmp/{{ app_name }}"
 
-    - name: create db
-      command: sudo su postgres - createdb sweetroll
+    - name: store tempdir
+      set_fact:
+       backup_file: "/tmp{{ app_name }}"
+
+    - name: create db (will not fail if not exist)
+      command: "createdb {{ app_name }}"
+      become_user: database_user
+      ignore_errors: yes 
+      no_log: True
 
     - name: Import database
-      command: sudo su postgres - gunzip < sweetroll.sql.gz | psql sweetroll
+      shell: "gunzip < {{ backup_file }}| psql {{ app_name }}"
+      become_user: database_user
+
+    - debug:
+       msg: The database application {{ app_name }} has been updated.

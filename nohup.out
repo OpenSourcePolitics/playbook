@@ -1,0 +1,48 @@
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": ""
+}
+
+TASK [Backup database and store file to tmp directory] *************************
+changed: [sweetroll.osp.cat]
+
+TASK [store tempdir] ***********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Transfer database to host] ***********************************************
+fatal: [sweetroll.osp.cat]: FAILED! => {"msg": "template error while templating string: no filter named 'app_name'. String: /home/mako/{{ hostvars.all['app_name']| app_name }}"}
+	to retry, use: --limit @/home/mako/playbook/backup_and_reimport_database.retry
+
+PLAY RECAP *********************************************************************
+sweetroll.osp.cat          : ok=4    changed=1    unreachable=0    failed=1   
+
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": ""
+}
+
+TASK [Backup database and store file to tmp directory] *************************
+changed: [sweetroll.osp.cat]
+
+TASK [store tempdir] ***********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Transfer database to host] ***********************************************
+fatal: [sweetroll.osp.cat]: FAILED! => {"msg": "template error while templating string: no filter named 'app_name'. String: /home/mako/{{ hostvars.all['app_name']| app_name }}"}
+	to retry, use: --limit @/home/mako/playbook/backup_and_reimport_database.retry
+
+PLAY RECAP *********************************************************************
+sweetroll.osp.cat          : ok=4    changed=1    unreachable=0    failed=1   
+
