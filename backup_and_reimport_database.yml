@@ -10,7 +10,7 @@
     - name: Backup database and store file to tmp directory
       shell: "pg_dump -Fp -c -Z 9 {{ database_name }} > /tmp/{{ backup_filename }}"
 
-    - name: store tempdir 
+    - name: store tempfile path 
       set_fact:
        backup_file: "/tmp/{{ backup_filename }}"
 
@@ -21,21 +21,23 @@
     - name: Transfer database to host
       fetch:
         src: "{{ backup_file }}"
-        dest: "/tmp/{{ app_name }}"
+        dest: "/home/{{ ansible_user }}"
+        fail_on_missing: true
+      register: backup_dir
 
-    - name: store tempdir
-      set_fact:
-       backup_file: "/tmp{{ app_name }}"
+    - debug:
+       msg: "{{ backup_dir }}"
 
     - name: create db (will not fail if not exist)
       command: "createdb {{ app_name }}"
       become_user: database_user
+      delegate_to: localhost
       ignore_errors: yes 
       no_log: True
 
     - name: Import database
-      shell: "gunzip < {{ backup_file }}| psql {{ app_name }}"
-      become_user: database_user
+      shell: "sudo -u postgres -i gunzip < {{ backup_dir.dest }} | psql {{ app_name }}"
+      delegate_to: localhost
 
     - debug:
        msg: The database application {{ app_name }} has been updated.
