@@ -1,11 +1,20 @@
-# Backup database and store file to tmp directory
-pg_dump -Fp -c -Z 9 'osp_app' > "osp_app-$(date +%Y%m%d%H%M%S).sql.gz"
+---
+- hosts: all
+  remote_user: mako
+  vars:
+    - tmp: "tmp"
 
-# Transfer database to host
-scp -P 124 -i ~/.ssh/moustachu mako@sweetroll.osp.cat:/home/mako/pg_dump/osp_app-*.gz ~/sweetroll.sql.gz
+  tasks:
+    - name: Backup database and store file to tmp directory
+      command: pg_dump -Fp -c -Z 9 'osp_app' > "osp_app-$(date +%Y%m%d%H%M%S).sql.gz"
 
-# create db
-sudo su postgres - createdb sweetroll
+    - name: Transfer database to host
+      fetch:
+        src: /home/mako/pg_dump/osp_app-*.gz
+        dest: ~/
 
-# Import database
-sudo su postgres - gunzip < sweetroll.sql.gz | psql sweetroll
+    - name: create db
+      command: sudo su postgres - createdb sweetroll
+
+    - name: Import database
+      command: sudo su postgres - gunzip < sweetroll.sql.gz | psql sweetroll
