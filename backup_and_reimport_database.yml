@@ -6,7 +6,7 @@
 
   tasks:
     - name: Backup database and store file to tmp directory
-      command: pg_dump -Fp -c -Z 9 'osp_app' > "osp_app-$(date +%Y%m%d%H%M%S).sql.gz"
+      shell: pg_dump -Fp -c -Z 9 'osp_app' > "osp_app-$(date +%Y%m%d%H%M%S).sql.gz"
 
     - name: Transfer database to host
       fetch:
