@@ -32,12 +32,23 @@
       command: "createdb {{ app_name }}"
       become_user: database_user
       delegate_to: localhost
-      ignore_errors: yes 
-      no_log: True
+      ignore_errors: yes
 
     - name: Import database
-      shell: "sudo -u postgres -i gunzip < {{ backup_dir.dest }} | psql {{ app_name }}"
+      shell: "gunzip < {{ backup_dir.dest }} | psql {{ app_name }}"
+      become_user: database_user
       delegate_to: localhost
+
+    - name: Remove distant file
+      file:
+        state: absent
+        path: "{{ backup_file }}"
+
+    - name: Remove backup dir
+      file:
+        state: absent
+        path: "{{ backup_dir.dest }}"
+      delegate_to: localhhost
 
     - debug:
        msg: The database application {{ app_name }} has been updated.

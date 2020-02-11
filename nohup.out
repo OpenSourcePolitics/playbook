@@ -46,3 +46,93 @@ fatal: [sweetroll.osp.cat]: FAILED! => {"msg": "template error while templating 
 PLAY RECAP *********************************************************************
 sweetroll.osp.cat          : ok=4    changed=1    unreachable=0    failed=1   
 
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Backup database and store file to tmp directory] *************************
+changed: [sweetroll.osp.cat]
+
+TASK [store tempfile path] *****************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Set app_name] ************************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Transfer database to host] ***********************************************
+ok: [sweetroll.osp.cat]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": {
+        "changed": false, 
+        "checksum": "c1bca58f8b5e5992895ab4d4388a293185136f5f", 
+        "dest": "/home/mako/sweetroll.osp.cat/tmp/backup-sweetroll.osp.cat_2020-02-11_18-19.sql.gz", 
+        "failed": false, 
+        "file": "/tmp/backup-sweetroll.osp.cat_2020-02-11_18-19.sql.gz", 
+        "md5sum": "70de8175c638ba0854c8add063a15921"
+    }
+}
+
+TASK [create db (will not fail if not exist)] **********************************
+fatal: [sweetroll.osp.cat -> localhost]: FAILED! => {"changed": true, "cmd": ["createdb", "sweetroll"], "delta": "0:00:00.054611", "end": "2020-02-11 18:19:38.367918", "msg": "non-zero return code", "rc": 1, "start": "2020-02-11 18:19:38.313307", "stderr": "createdb: database creation failed: ERROR:  permission denied to create database", "stderr_lines": ["createdb: database creation failed: ERROR:  permission denied to create database"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Import database] *********************************************************
+changed: [sweetroll.osp.cat -> localhost]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": "The database application sweetroll has been updated."
+}
+
+PLAY RECAP *********************************************************************
+sweetroll.osp.cat          : ok=9    changed=3    unreachable=0    failed=0   
+
+
+PLAY [all] *********************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Backup database and store file to tmp directory] *************************
+changed: [sweetroll.osp.cat]
+
+TASK [store tempfile path] *****************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Set app_name] ************************************************************
+ok: [sweetroll.osp.cat]
+
+TASK [Transfer database to host] ***********************************************
+ok: [sweetroll.osp.cat]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": {
+        "changed": false, 
+        "checksum": "c1bca58f8b5e5992895ab4d4388a293185136f5f", 
+        "dest": "/home/mako/sweetroll.osp.cat/tmp/backup-sweetroll.osp.cat_2020-02-11_18-21.sql.gz", 
+        "failed": false, 
+        "file": "/tmp/backup-sweetroll.osp.cat_2020-02-11_18-21.sql.gz", 
+        "md5sum": "70de8175c638ba0854c8add063a15921"
+    }
+}
+
+TASK [create db (will not fail if not exist)] **********************************
+fatal: [sweetroll.osp.cat -> localhost]: FAILED! => {"changed": true, "cmd": ["createdb", "sweetroll"], "delta": "0:00:00.048791", "end": "2020-02-11 18:21:49.708542", "msg": "non-zero return code", "rc": 1, "start": "2020-02-11 18:21:49.659751", "stderr": "createdb: database creation failed: ERROR:  database \"sweetroll\" already exists", "stderr_lines": ["createdb: database creation failed: ERROR:  database \"sweetroll\" already exists"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Import database] *********************************************************
+changed: [sweetroll.osp.cat -> localhost]
+
+TASK [debug] *******************************************************************
+ok: [sweetroll.osp.cat] => {
+    "msg": "The database application sweetroll has been updated."
+}
+
+PLAY RECAP *********************************************************************
+sweetroll.osp.cat          : ok=9    changed=3    unreachable=0    failed=0   
+
