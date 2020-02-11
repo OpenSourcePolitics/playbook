@@ -4,7 +4,7 @@
     - default_app_name: osp_app
     - database_name: osp_app
     - database_user: postgres
-    - backup_filename: "backup-{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.tar.gz"
+    - backup_filename: "backup-{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.sql.gz"
 
   tasks:
     - name: Backup database and store file to tmp directory
