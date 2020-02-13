@@ -2,11 +2,15 @@
 - hosts: all
   vars:
     - default_app_name: osp_app
-    - database_name: osp_app
+    - default_database_name: osp_app
     - database_user: postgres
     - backup_filename: "backup-{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.sql.gz"
 
   tasks:
+    - name: Set database name
+      set_fact:
+       database_name: "{{ database_name | default(default_database_name) }}"
+
     - name: Backup database and store file to tmp directory
       shell: "pg_dump -Fp -c -Z 9 {{ database_name }} > /tmp/{{ backup_filename }}"
 
@@ -21,18 +25,16 @@
     - name: Transfer database to host
       fetch:
         src: "{{ backup_file }}"
-        dest: "/home/{{ ansible_user }}"
+        dest: "/tmp"
         fail_on_missing: true
       register: backup_dir
-
-    - debug:
-       msg: "{{ backup_dir }}"
 
     - name: create db (will not fail if not exist)
       command: "createdb {{ app_name }}"
       become_user: database_user
       delegate_to: localhost
       ignore_errors: yes
+      no_log: true
 
     - name: Import database
       shell: "gunzip < {{ backup_dir.dest }} | psql {{ app_name }}"
@@ -48,7 +50,7 @@
       file:
         state: absent
         path: "{{ backup_dir.dest }}"
-      delegate_to: localhhost
+      delegate_to: localhost
 
     - debug:
        msg: The database application {{ app_name }} has been updated.
